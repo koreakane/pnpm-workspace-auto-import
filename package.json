@@ -2,14 +2,14 @@
   "name": "pnpm-workspace-auto-import",
   "displayName": "pnpm-workspace-auto-import",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.86.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["*"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -28,7 +28,8 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build": "pnpm vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",

@@ -19,24 +19,29 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCodeActionsProvider(
       { pattern: "**/*.{ts,js,tsx,jsx}", scheme: "file" },
       {
-		provideCodeActions: (document, range, context, token) => {
-			const lineText = document.lineAt(range.start.line).text;
-			const importMatch = lineText.match(/import\s+.*\s+from\s+'(@wrtn\/[a-zA-Z0-9_-]+)'/);
-			if (!importMatch) {
-				return;
-			}
-		
-			const packageName = importMatch[1];
-			const command: vscode.Command = {
-				title: 'Add to package.json and install',
-				command: 'extension.addDependency',
-				arguments: [document.uri.fsPath, packageName],
-			};
-		
-			const action = new vscode.CodeAction(command.title, vscode.CodeActionKind.QuickFix);
-			action.command = command;
-			return [action];
-		},
+        provideCodeActions: (document, range, context, token) => {
+          const lineText = document.lineAt(range.start.line).text;
+          const importMatch = lineText.match(
+            /import\s+.*\s+from\s+['"](@wrtn\/[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*)['"]/
+          );
+          if (!importMatch) {
+            return;
+          }
+
+          const packageName = importMatch[1];
+          const command: vscode.Command = {
+            title: "Add to package.json and install",
+            command: "extension.addDependency",
+            arguments: [document.uri.fsPath, packageName],
+          };
+
+          const action = new vscode.CodeAction(
+            command.title,
+            vscode.CodeActionKind.QuickFix
+          );
+          action.command = command;
+          return [action];
+        },
       },
       {
         providedCodeActionKinds: [vscode.CodeActionKind.QuickFix],
@@ -74,14 +79,10 @@ export function activate(context: vscode.ExtensionContext) {
           );
 
           const terminal = vscode.window.createTerminal();
-          terminal.sendText(
-            `pnpm install`
-          );
+          terminal.sendText(`pnpm install`);
           terminal.show();
         }
       }
     )
   );
 }
-
-export function deactivate() {}
