@@ -2,7 +2,7 @@
   "name": "pnpm-workspace-auto-import",
   "displayName": "pnpm-workspace-auto-import",
   "description": "",
-  "version": "0.0.5",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -32,8 +32,29 @@
       {
         "command": "extension.installAllDependencies",
         "title": "Install All Dependencies"
+      },
+      {
+        "command": "pnpmWorkspace.copyPackageName",
+        "title": "패키지명 복사"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pnpm-workspace-explorer",
+          "title": "PNPM Workspace",
+          "icon": "resources/pnpm.svg"
+        }
+      ]
+    },
+    "views": {
+      "pnpm-workspace-explorer": [
+        {
+          "id": "pnpmWorkspaceView",
+          "name": "Workspace Dependencies"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
@@ -48,6 +69,7 @@
     "build": "pnpm vsce package --no-dependencies"
   },
   "devDependencies": {
+    "js-yaml": "^4.1.0",
     "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",

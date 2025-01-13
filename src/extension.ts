@@ -1,46 +1,20 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import * as yaml from "js-yaml";
 
-function findPackageJson(filePath: string): string | null {
-  let dir = path.dirname(filePath);
-  while (dir !== path.dirname(dir)) {
-    const packageJsonPath = path.join(dir, "package.json");
-    if (fs.existsSync(packageJsonPath)) {
-      return packageJsonPath;
-    }
-    dir = path.dirname(dir);
-  }
-  return null;
-}
-
-function addDependencyToPackageJson(
-  packageJsonPath: string,
-  packageName: string
-) {
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-
-  if (!packageJson.dependencies) {
-    packageJson.dependencies = {};
-  }
-
-  if (!packageJson.dependencies[packageName]) {
-    packageJson.dependencies[packageName] = "workspace:*";
-    fs.writeFileSync(
-      packageJsonPath,
-      JSON.stringify(packageJson, null, 2),
-      "utf-8"
-    );
-  }
-}
+import { addDependencyToPackageJson, findPackageJson } from "./codes";
+import { WorkspaceExplorer } from "./explorer";
 
 export function activate(context: vscode.ExtensionContext) {
+  // 1. 설정 가져오기
   const config = vscode.workspace.getConfiguration();
   const customPackagePrefix = config.get<string>(
     "customPackagePrefix",
     "@wrtn"
   );
 
+  // 2. CodeActionsProvider 등록
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       { pattern: "**/*.{ts,js,tsx,jsx}", scheme: "file" },
@@ -136,4 +110,31 @@ export function activate(context: vscode.ExtensionContext) {
       }
     )
   );
+
+  // View Provider 등록
+
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+
+  if (workspaceRoot) {
+    const workspaceExplorer = new WorkspaceExplorer(workspaceRoot);
+    vscode.window.registerTreeDataProvider(
+      "pnpmWorkspaceView",
+      workspaceExplorer
+    );
+  }
+
+  // 복사 커맨드 등록
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "pnpmWorkspace.copyPackageName",
+      (packageName: string) => {
+        vscode.env.clipboard.writeText(packageName);
+        vscode.window.showInformationMessage(
+          `패키지명 "${packageName}" 복사됨`
+        );
+      }
+    )
+  );
 }
+
+//

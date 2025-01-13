@@ -4,49 +4,55 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@types/js-yaml':
-    specifier: ^4.0.9
-    version: 4.0.9
-  '@types/mocha':
-    specifier: ^10.0.6
-    version: 10.0.6
-  '@types/node':
-    specifier: 18.x
-    version: 18.19.18
-  '@types/vscode':
-    specifier: ^1.86.0
-    version: 1.86.0
-  '@typescript-eslint/eslint-plugin':
-    specifier: ^7.0.2
-    version: 7.0.2(@typescript-eslint/parser@7.0.2)(eslint@8.57.0)(typescript@5.3.3)
-  '@typescript-eslint/parser':
-    specifier: ^7.0.2
-    version: 7.0.2(eslint@8.57.0)(typescript@5.3.3)
-  '@vscode/test-cli':
-    specifier: ^0.0.6
-    version: 0.0.6
-  '@vscode/test-electron':
-    specifier: ^2.3.9
-    version: 2.3.9
-  eslint:
-    specifier: ^8.56.0
-    version: 8.57.0
-  ts-loader:
-    specifier: ^9.5.1
-    version: 9.5.1(typescript@5.3.3)(webpack@5.90.3)
-  typescript:
-    specifier: ^5.3.3
-    version: 5.3.3
-  vsce:
-    specifier: ^2.15.0
-    version: 2.15.0
-  webpack:
-    specifier: ^5.90.3
-    version: 5.90.3(webpack-cli@5.1.4)
-  webpack-cli:
-    specifier: ^5.1.4
-    version: 5.1.4(webpack@5.90.3)
+importers:
+
+  .:
+    devDependencies:
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+      '@types/mocha':
+        specifier: ^10.0.6
+        version: 10.0.6
+      '@types/node':
+        specifier: 18.x
+        version: 18.19.18
+      '@types/vscode':
+        specifier: ^1.86.0
+        version: 1.86.0
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^7.0.2
+        version: 7.0.2(@typescript-eslint/parser@7.0.2)(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/parser':
+        specifier: ^7.0.2
+        version: 7.0.2(eslint@8.57.0)(typescript@5.3.3)
+      '@vscode/test-cli':
+        specifier: ^0.0.6
+        version: 0.0.6
+      '@vscode/test-electron':
+        specifier: ^2.3.9
+        version: 2.3.9
+      eslint:
+        specifier: ^8.56.0
+        version: 8.57.0
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
+      ts-loader:
+        specifier: ^9.5.1
+        version: 9.5.1(typescript@5.3.3)(webpack@5.90.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+      vsce:
+        specifier: ^2.15.0
+        version: 2.15.0
+      webpack:
+        specifier: ^5.90.3
+        version: 5.90.3(webpack-cli@5.1.4)
+      webpack-cli:
+        specifier: ^5.1.4
+        version: 5.1.4(webpack@5.90.3)
 
 packages:
 
