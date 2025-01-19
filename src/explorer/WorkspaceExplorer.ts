@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
 
-interface WorkspacePackage {
+export interface WorkspacePackage {
   name: string;
   path: string;
   children?: WorkspacePackage[];
@@ -38,20 +38,9 @@ export class WorkspaceExplorer
         arguments: [vscode.Uri.file(path.join(element.path, "package.json"))],
       };
 
-      // 패키지 아이템에 대한 툴팁 설정
-      const tooltip = new vscode.MarkdownString();
-      tooltip.supportHtml = true;
-      tooltip.appendMarkdown(`### ${element.name}\n\n`);
-      tooltip.appendMarkdown(`📁 ${element.path}\n\n`);
-      tooltip.appendMarkdown(
-        `$(copy) [패키지명 복사](command:pnpmWorkspace.copyPackageName?${encodeURIComponent(
-          JSON.stringify([element.name])
-        )})`
-      );
-      tooltip.isTrusted = true;
-
-      treeItem.tooltip = tooltip;
-      treeItem.contextValue = "package";
+      treeItem.tooltip = element.path;
+      treeItem.contextValue = "packageWithCopy";
+      treeItem.id = element.name; // id 속성 사용
     } else {
       treeItem.tooltip = element.path;
     }

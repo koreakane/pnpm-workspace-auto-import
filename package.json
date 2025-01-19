@@ -2,7 +2,7 @@
   "name": "pnpm-workspace-auto-import",
   "displayName": "pnpm-workspace-auto-import",
   "description": "",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -35,7 +35,8 @@
       },
       {
         "command": "pnpmWorkspace.copyPackageName",
-        "title": "패키지명 복사"
+        "title": "Copy Package Name",
+        "icon": "$(copy)"
       }
     ],
     "viewsContainers": {
@@ -52,6 +53,15 @@
         {
           "id": "pnpmWorkspaceView",
           "name": "Workspace Dependencies"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "pnpmWorkspace.copyPackageName",
+          "when": "viewItem == packageWithCopy",
+          "group": "inline"
         }
       ]
     }

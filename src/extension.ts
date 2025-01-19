@@ -4,7 +4,7 @@ import * as path from "path";
 import * as yaml from "js-yaml";
 
 import { addDependencyToPackageJson, findPackageJson } from "./codes";
-import { WorkspaceExplorer } from "./explorer";
+import { WorkspaceExplorer, WorkspacePackage } from "./explorer";
 
 export function activate(context: vscode.ExtensionContext) {
   // 1. 설정 가져오기
@@ -123,18 +123,27 @@ export function activate(context: vscode.ExtensionContext) {
     );
   }
 
-  // 복사 커맨드 등록
+  const outputChannel = vscode.window.createOutputChannel("PNPM Workspace");
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "pnpmWorkspace.copyPackageName",
-      (packageName: string) => {
-        vscode.env.clipboard.writeText(packageName);
-        vscode.window.showInformationMessage(
-          `패키지명 "${packageName}" 복사됨`
-        );
+      (item: WorkspacePackage) => {
+        // 디버그 로깅
+        outputChannel.appendLine("복사 커맨드 실행됨");
+        outputChannel.appendLine("전달된 item:");
+        outputChannel.appendLine(JSON.stringify(item, null, 2));
+
+        const packageName = item.name;
+        outputChannel.appendLine(`패키지명: ${packageName}`);
+
+        if (packageName) {
+          vscode.env.clipboard.writeText(`"${packageName}"`);
+          vscode.window.showInformationMessage(
+            `패키지명 "${packageName}" 복사됨`
+          );
+        }
       }
     )
   );
 }
-
-//
