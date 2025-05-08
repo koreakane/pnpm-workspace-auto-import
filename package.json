@@ -2,7 +2,7 @@
   "name": "pnpm-workspace-auto-import",
   "displayName": "pnpm-workspace-auto-import",
   "description": "",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -79,7 +79,6 @@
     "build": "pnpm vsce package --no-dependencies"
   },
   "devDependencies": {
-    "js-yaml": "^4.1.0",
     "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
@@ -89,6 +88,7 @@
     "@vscode/test-cli": "^0.0.6",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
+    "js-yaml": "^4.1.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "vsce": "^2.15.0",

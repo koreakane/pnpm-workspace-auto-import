@@ -87,15 +87,38 @@ export class WorkspaceExplorer
       const workspaceConfig = yaml.load(yamlContent) as { packages: string[] };
       const packages: WorkspacePackage[] = [];
 
+      // 패키지가 발견된 디렉토리 경로를 저장하는 Set
+      const packageDirs = new Set<string>();
+
       for (const pkgPattern of workspaceConfig.packages) {
         const pkgPaths = await vscode.workspace.findFiles(
           pkgPattern + "/**/package.json",
           "**/node_modules/**"
         );
 
+        // 중첩 패키지를 필터링하기 위한 전처리
+        const filteredPaths = pkgPaths.filter((uri) => {
+          const dir = path.dirname(uri.fsPath);
+
+          // 현재 디렉토리의 상위 경로를 확인
+          let parent = dir;
+          while (parent !== this.workspaceRoot) {
+            parent = path.dirname(parent);
+            // 부모 디렉토리가 이미 패키지로 등록되어 있으면 현재 패키지는 제외
+            if (packageDirs.has(parent)) {
+              return false;
+            }
+          }
+
+          // 패키지 디렉토리로 등록
+          packageDirs.add(dir);
+          return true;
+        });
+
         const packageTree: { [key: string]: WorkspacePackage } = {};
 
-        for (const pkgJsonUri of pkgPaths) {
+        // 필터링된 패키지 경로만 처리
+        for (const pkgJsonUri of filteredPaths) {
           try {
             const pkgJsonContent = fs.readFileSync(pkgJsonUri.fsPath, "utf8");
             const pkgJson = JSON.parse(pkgJsonContent);
@@ -103,6 +126,7 @@ export class WorkspaceExplorer
             const relativePath = path.relative(this.workspaceRoot, pkgPath);
             const pathParts = relativePath.split(path.sep);
 
+            // ...existing code...
             let currentPath = "";
             let currentParent: WorkspacePackage | null = null;
 
@@ -150,5 +174,50 @@ export class WorkspaceExplorer
       vscode.window.showErrorMessage(`워크스페이스 패키지 로딩 실패: ${error}`);
       return [];
     }
+  }
+
+  public async getPackages(): Promise<WorkspacePackage[]> {
+    const allPackages: WorkspacePackage[] = [];
+    await this.collectPackages(allPackages);
+    return allPackages.filter((pkg) => pkg.type === "package");
+  }
+
+  /**
+   * 캐시된 패키지 목록을 반환하는 동기 메서드
+   * 주의: 최신 데이터가 아닐 수 있으므로, 확실한 최신 데이터가 필요한 경우 getPackages()를 사용하세요.
+   */
+  public getCachedPackages(): WorkspacePackage[] {
+    // 이미 로드된 패키지가 없으면 빈 배열 반환
+    if (!this._cachedPackages) {
+      this._cachedPackages = [];
+      // 백그라운드에서 패키지 로드 시작
+      this.getPackages().then((packages) => {
+        this._cachedPackages = packages;
+      });
+      return [];
+    }
+    return this._cachedPackages;
+  }
+
+  // 캐시된 패키지 목록
+  private _cachedPackages: WorkspacePackage[] | null = null;
+
+  /**
+   * 모든 패키지를 재귀적으로 수집하여 단일 배열에 추가합니다.
+   */
+  private async collectPackages(result: WorkspacePackage[]) {
+    const rootPackages = await this.getWorkspacePackages();
+
+    const collectChildren = (packages: WorkspacePackage[]) => {
+      for (const pkg of packages) {
+        result.push(pkg);
+
+        if (pkg.children && pkg.children.length > 0) {
+          collectChildren(pkg.children);
+        }
+      }
+    };
+
+    collectChildren(rootPackages);
   }
 }
